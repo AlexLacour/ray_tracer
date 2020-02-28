@@ -7,7 +7,7 @@ Scene::Scene(int dim_x_p, int dim_y_p, int dim_z_p){
 }
 
 
-Color Scene::getPixelColor(Ray camRay){
+Object3d* Scene::getNearestObject(Ray camRay, float &distance){
     std::vector<std::vector<float>> objectsDistances;
     for(unsigned int objId=0; objId<objects.size(); objId++){
         if(objects[objId]->getIntersectionDistance(camRay) >= 0){
@@ -28,12 +28,30 @@ Color Scene::getPixelColor(Ray camRay){
                 minDistanceId = (int)objectsDistances[objDisId][0];
             }
         }
-        return objects[minDistanceId]->getColor();
+        distance = minDistance;
+        return objects[minDistanceId];
     }
-    else{
-        Color colorDefault;
-        return colorDefault;
+    return NULL;
+}
+
+
+Color Scene::RayTrace(Ray camRay){
+    // Find Nearest Object
+    float distance;
+    Object3d* nearestObject = getNearestObject(camRay, distance);
+    Color pixelColor;
+    if(nearestObject){
+        // Get Object Color
+        pixelColor = nearestObject->getColor();
+        for(unsigned int lightId=0; lightId<lights.size(); lightId++){
+            Vector3d lightDir = lights[lightId]->getDirection();
+            Vector3d spherePoint = camRay.getOrigin() + (camRay.getDir() * distance);
+            Vector3d normalVector = nearestObject->getNormalAt(spherePoint);
+            pixelColor *= lights[lightId]->getColor();
+            pixelColor *= (normalVector.dot(lightDir));
+        }
     }
+    return pixelColor;
 }
 
 
@@ -41,14 +59,16 @@ unsigned char* Scene::Render(unsigned int imgWidth, unsigned int imgHeight, Vect
     unsigned char* buffer = new unsigned char[imgWidth * imgHeight * 3];
     for(int w=0; w<imgWidth; w++){
         for(int h=0; h<imgHeight; h++){
-            Vector3d bufferPoint(w - (int)(imgWidth / 2), h - (int)(imgHeight / 2), 0);
+            Vector3d bufferPoint((double)(w - (int)(imgWidth / 2)) / (double)imgWidth,
+                                 (double)(h - (int)(imgHeight / 2)) / (double)imgHeight,
+                                 0);
             Vector3d rayDir = bufferPoint - rayTracerOrigin;
 
             Ray camRay(rayTracerOrigin, rayDir);
-            Color PixelColor = getPixelColor(camRay);
-            buffer[(h * imgWidth + w) * 3 + 0] = PixelColor.b * PixelColor.a;
-            buffer[(h * imgWidth + w) * 3 + 1] = PixelColor.g * PixelColor.a;
-            buffer[(h * imgWidth + w) * 3 + 2] = PixelColor.r * PixelColor.a;
+            Color PixelColor = RayTrace(camRay);
+            buffer[(h * imgWidth + w) * 3 + 0] = PixelColor.b * PixelColor.a * 255.0;
+            buffer[(h * imgWidth + w) * 3 + 1] = PixelColor.g * PixelColor.a * 255.0;
+            buffer[(h * imgWidth + w) * 3 + 2] = PixelColor.r * PixelColor.a * 255.0;
         }
     }
     return buffer;
@@ -57,4 +77,9 @@ unsigned char* Scene::Render(unsigned int imgWidth, unsigned int imgHeight, Vect
 
 void Scene::addObject(Object3d* obj){
     objects.push_back(obj);
+}
+
+
+void Scene::addLight(Light* light){
+    lights.push_back(light);
 }

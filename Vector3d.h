@@ -1,3 +1,6 @@
+#ifndef __VECTOR3D_H
+#define __VECTOR3D_H
+
 #include <iostream>
 #include <cmath>
 
@@ -29,3 +32,5 @@ class Vector3d{
         float y;
         float z;
 };
+
+#endif

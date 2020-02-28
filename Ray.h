@@ -1,3 +1,6 @@
+#ifndef __RAY_H
+#define __RAY_H
+
 #include "Vector3d.h"
 
 class Ray
@@ -11,3 +14,5 @@ class Ray
         Vector3d getOrigin();
         Vector3d getDir();
 };
+
+#endif

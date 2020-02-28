@@ -6,3 +6,39 @@ Color::Color(float r_p, float g_p, float b_p, float a_p){
     b = b_p;
     a = a_p;
 }
+
+
+Color Color::operator * (const float k){
+    return Color(r * k, g * k, b * k);
+}
+
+
+Color Color::operator * (const Color c){
+    return Color(r * c.r, g * c.g, b * c.b);
+}
+
+
+Color Color::operator = (const Color c){
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
+
+    return *this;
+}
+
+Color Color::operator *= (const Color c){
+    r *= c.r;
+    g *= c.g;
+    b *= c.b;
+
+    return *this;
+}
+
+Color Color::operator *= (const float k){
+    r *= k;
+    g *= k;
+    b *= k;
+
+    return *this;
+}
