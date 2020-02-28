@@ -45,10 +45,15 @@ Color Scene::RayTrace(Ray camRay){
         pixelColor = nearestObject->getColor();
         for(unsigned int lightId=0; lightId<lights.size(); lightId++){
             Vector3d lightDir = lights[lightId]->getDirection();
+            Vector3d toLight = (lightDir * (-1));
             Vector3d spherePoint = camRay.getOrigin() + (camRay.getDir() * distance);
             Vector3d normalVector = nearestObject->getNormalAt(spherePoint);
-            pixelColor *= lights[lightId]->getColor();
-            pixelColor *= (normalVector.dot(lightDir));
+            float nScalarL = normalVector.dot(toLight);
+            if(nScalarL < 0){
+                nScalarL = 0;
+            }
+            std::cout << nScalarL << " ";
+            pixelColor = (pixelColor * lights[lightId]->getColor()) * nScalarL;
         }
     }
     return pixelColor;

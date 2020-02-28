@@ -24,7 +24,7 @@ int main(){
     Sphere sphereToAdd2(sphereCenter2, 0.7, sphereColor2);
     testScene.addObject(&sphereToAdd2);
 
-    Vector3d lightDirection(-1, -1, 0);
+    Vector3d lightDirection(1, 1, 0);
     DirectionalLight dirLightToAdd(lightDirection);
     testScene.addLight(&dirLightToAdd);
 

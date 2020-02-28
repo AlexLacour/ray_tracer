@@ -24,17 +24,25 @@ float Sphere::getIntersectionDistance(Ray incidentRay){
 
     float t1, t2, t;
     t = -1;
-    if(delta >= 0){
+    if(delta > 0){
         t1 = (- b + sqrt(delta)) / (2 * a);
         t2 = (- b - sqrt(delta)) / (2 * a);
-        if(t1 >= 0 && t2 >= 0){
+        if(t1 > 0 && t2 > 0){
             t = std::min(t1, t2);
         }
-        else if(t1 < 0  && t2 >= 0){
+        else if(t1 < 0  && t2 > 0){
             t = t2;
         }
-        else if(t2 < 0  && t1 >= 0){
+        else if(t2 < 0  && t1 > 0){
             t = t1;
+        }
+        return t;
+    }
+    else if(delta == 0){
+        float t_p = (-b / (2 * a));
+        if(t_p >= 0){
+            t = t_p;
+            return  t;
         }
     }
     return t;
