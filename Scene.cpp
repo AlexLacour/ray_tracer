@@ -52,7 +52,6 @@ Color Scene::RayTrace(Ray camRay){
             if(nScalarL < 0){
                 nScalarL = 0;
             }
-            std::cout << nScalarL << " ";
             pixelColor = (pixelColor * lights[lightId]->getColor()) * nScalarL;
         }
     }
