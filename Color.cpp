@@ -17,6 +17,9 @@ Color Color::operator * (const Color c){
     return Color(r * c.r, g * c.g, b * c.b);
 }
 
+Color Color::operator + (const Color c){
+    return Color(r + c.r, g + c.g, b + c.b);
+}
 
 Color Color::operator = (const Color c){
     r = c.r;
@@ -39,6 +42,28 @@ Color Color::operator *= (const float k){
     r *= k;
     g *= k;
     b *= k;
+
+    return *this;
+}
+
+Color Color::operator += (const Color c){
+    r += c.r;
+    g += c.g;
+    b += c.b;
+
+    return *this;
+}
+
+Color Color::cap(){
+    if(r > 1){
+        r = 1;
+    }
+    if(g > 1){
+        g = 1;
+    }
+    if(b > 1){
+        b = 1;
+    }
 
     return *this;
 }

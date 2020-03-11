@@ -1,8 +1,9 @@
 #include "Sphere.h"
 
-Sphere::Sphere(Vector3d center_p, float R_p, Color color_p)
-: Object3d(center_p, color_p){
+Sphere::Sphere(Vector3d center_p, float R_p, Color color_p, float ks_p, float nShiny_p, float kr_p)
+: Object3d(center_p, color_p, ks_p, nShiny_p, kr_p){
     R = R_p;
+    hasTextureAtt = false;
 }
 
 
@@ -40,7 +41,7 @@ float Sphere::getIntersectionDistance(Ray incidentRay){
     }
     else if(delta == 0){
         float t_p = (-b / (2 * a));
-        if(t_p >= 0){
+        if(t_p > 0){
             t = t_p;
             return  t;
         }
@@ -51,4 +52,29 @@ float Sphere::getIntersectionDistance(Ray incidentRay){
 
 Vector3d Sphere::getNormalAt(Vector3d point){
     return (point - center).normalize();
+}
+
+
+void Sphere::loadTexture(unsigned char* texMap_p, int texWidth, int texHeight){
+    textureMap = texMap_p;
+    hasTextureAtt = true;
+    textureWidth = texWidth;
+    textureHeight = texHeight;
+}
+
+
+Color Sphere::getColorTexture(Vector3d normalVector){
+    float u = std::asin(normalVector.x) / M_PI + 0.5;
+    float v = std::asin(normalVector.y) / M_PI + 0.5;
+
+    int b = textureMap[((int)(textureHeight * v) * textureWidth + (int)(textureWidth * u)) * 3 + 0];
+    int g = textureMap[((int)(textureHeight * v) * textureWidth + (int)(textureWidth * u)) * 3 + 1];
+    int r = textureMap[((int)(textureHeight * v) * textureWidth + (int)(textureWidth * u)) * 3 + 2];
+
+    return Color(r, g, b);
+}
+
+
+bool Sphere::hasTexture(){
+    return hasTextureAtt;
 }
